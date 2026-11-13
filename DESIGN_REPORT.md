@@ -29,6 +29,9 @@ arrays bound the catalog to 1,000 books and the loan history to 10,000 records.
 
 The two versioned text files, `books.txt` and `loans.txt`, retain the records
 between runs. A returned loan stays in the history with inactive status.
+Books can be removed after all copies are returned; their returned loan
+history remains valid even when the catalog record is gone. Active loans must
+always refer to a book in the catalog.
 Available copies are derived, rather than duplicated in storage:
 
 ```text
@@ -107,7 +110,28 @@ larger collections, precomputed availability and a book-ID index could reduce
 these costs; the linear implementation is intentionally straightforward for
 this project. Persistent storage is O(B + L).
 
-## 7. Verification checklist
+## 7. Measured book-search benchmark
+
+The program was compiled with the LLVM-MinGW 23.1.4 GCC-compatible driver
+using `-O2` on Windows x64. Each trial launched the program and performed
+10,000 title searches for a unique title at the end of the catalog, with no
+loans. Output was redirected to `NUL`. The values below are medians of five
+wall-clock trials:
+
+| Catalog size | Searches per trial | Median batch time | Median time per search |
+|---:|---:|---:|---:|
+| 100 books | 10,000 | 0.369 s | 0.03693 ms |
+| 500 books | 10,000 | 1.049 s | 0.10487 ms |
+| 1,000 books | 10,000 | 1.730 s | 0.17302 ms |
+
+The measured time includes process startup, loading the catalog, menu/input
+handling, scanning, and writing output to `NUL`; it is a repeatable
+end-to-end batch measurement, not an isolated function timer. Search time
+increases with catalog size, consistent with the linear scan. Timings are
+environment-specific and should be rerun on the presentation machine if
+comparing hardware or compilers.
+
+## 8. Verification checklist
 
 Use the following cases during a demonstration. The application stores files
 in its current directory, so run test cases in a fresh directory or back up
@@ -123,17 +147,14 @@ the data files first.
 | Reject invalid update | With both copies loaned, set total copies to 1 | Rejected; existing record remains unchanged |
 | Protect active loan | Attempt to remove `B101` while loans are active | Rejected |
 | Return one issue | Return the first displayed loan ID | Return succeeds; available count becomes 1 |
+| Reissue a returned copy | Issue the returned copy to another student | A new loan ID is created; availability decreases by one |
 | Reject duplicate return | Return the same loan ID again | Rejected because it is no longer active |
 | Persist data | Exit and restart; display catalog and active loans | Catalog, counts, and outstanding loans are retained |
 | Reject unknown loan | Return a loan ID not present in the file | Rejected without changing counts |
 
-## 8. Build and demonstration
+## 9. Build and demonstration
 
 Compile and run commands and menu descriptions are in [README.md](./README.md).
 For a group demonstration, add a multi-copy book, search it, issue copies to
 different student IDs until it is unavailable, show the rejected extra issue,
 return one loan by ID, and restart the program to demonstrate persistence.
-
-No measured benchmark values are claimed here. The table above describes
-algorithmic costs; input-size timing measurements should be recorded on the
-target compiler/machine if required for the final presentation.

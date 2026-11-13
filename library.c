@@ -400,8 +400,8 @@ static int load_loans(void)
     }
 
     for (size_t i = 0; i < loan_count; i++) {
-        if (find_book(loans[i].book_id) < 0) {
-            fprintf(stderr, "Loan %lu refers to missing book '%s'.\n",
+        if (loans[i].active && find_book(loans[i].book_id) < 0) {
+            fprintf(stderr, "Active loan %lu refers to missing book '%s'.\n",
                     loans[i].id, loans[i].book_id);
             return 0;
         }
