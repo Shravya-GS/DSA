@@ -1,0 +1,10 @@
+# Executables and object files
+*.exe
+*.o
+*.out
+
+# Data files generated at runtime
+*.txt
+*.tmp
+!sample.txt
+
