@@ -58,3 +58,21 @@ file separator.
 Availability is calculated as `total copies - active loans`; it is not stored
 as an independently editable number. This prevents availability from going
 negative and ensures issue/return actions update the displayed count.
+
+## Student Information Management
+
+The standalone student-management module is in
+[`student_management/`](./student_management/). It covers student registration,
+ID lookup, updates, removal, sorted reports, and persistent records.
+
+Build and run from that directory:
+
+```text
+gcc -std=c99 -Wall -Wextra -pedantic student_management.c -o student_management
+.\student_management.exe
+```
+
+See [`student_management/README.md`](./student_management/README.md) for its
+data-structure design, complexity, test checklist, measured performance, and
+the benchmark command. This is a standalone module, not yet integrated with
+the library application.
