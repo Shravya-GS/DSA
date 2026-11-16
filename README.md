@@ -76,3 +76,34 @@ See [`student_management/README.md`](./student_management/README.md) for its
 data-structure design, complexity, test checklist, measured performance, and
 the benchmark command. This is a standalone module, not yet integrated with
 the library application.
+
+## Topic 5: Reports and Application Records
+
+`reports.c` is a read-only reports program for the saved student, library,
+complaint, and reservation files. It displays a summary, sorted student and
+book reports, waiting reservations, and complaints sorted by priority or
+status. It does not replace or modify the data files maintained by the other
+modules.
+
+Build from the repository root:
+
+```text
+gcc -std=c99 -Wall -Wextra -Wpedantic reports.c -o reports
+./reports
+```
+
+On Windows, run `reports.exe` from the repository root. By default, the
+program reads `student_management/students.txt`, `books.txt`, `loans.txt`,
+`topic4_complaints/complaints.dat`, and `reservations.txt`. You can override
+these paths, in that order, with up to five command-line arguments. Missing
+files are reported as unavailable; malformed files stop report generation
+with an error.
+
+The reservations report expects a versioned `reservations.txt` file whose
+header is `CAMPUS_RESERVATIONS_V1` and whose records are
+`reservation ID|book ID|student ID|queue order|status`. Status is one of
+`WAITING`, `OFFERED`, `CANCELLED`, or `FULFILLED`. Coordinate this format with
+the reservation module so its saved records can be reported correctly.
+
+See [`TOPIC5_REPORT.md`](./TOPIC5_REPORT.md) for the design, complexity,
+testing checklist, and comparative performance study notes.
